@@ -21,6 +21,8 @@ The graph files need to follow this rule:
 
 We give two data examples CO (CollegeMsg) and SM (SMS) here.
 
+para.csv gives the details of graphs, such as vertices number (the second line), edges number (the third line), etc.
+
 ## Code:
 
 Use the command “ulimit -s 102400” to increase the space of the stack.
