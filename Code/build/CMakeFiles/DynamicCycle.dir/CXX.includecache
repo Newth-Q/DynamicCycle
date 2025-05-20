@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/root/CycleEnum/DynamicCycle/Timer.h
+iostream
+-
+chrono
+-
+string
+-
+
+/root/CycleEnum/DynamicCycle/graph.cpp
+graph.h
+/root/CycleEnum/DynamicCycle/graph.h
+
+/root/CycleEnum/DynamicCycle/graph.h
+string
+-
+vector
+-
+chrono
+-
+algorithm
+-
+iostream
+-
+fstream
+-
+sstream
+-
+iomanip
+-
+set
+-
+Timer.h
+/root/CycleEnum/DynamicCycle/Timer.h
+

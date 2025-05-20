@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3  -Wall -Ofast   CMakeFiles/DynamicCycle.dir/main.cpp.o CMakeFiles/DynamicCycle.dir/graph.cpp.o  -o DynamicCycle 

@@ -1,70 +1,52 @@
-# Regular Simple Path Queries under Transitive Restricted Expressions
+# Efficient cycle enumeration on temporal networks
 
 ## Introduction
-There are two fundamental problems in regular simple path queries (RSPQs). One is the reachability problem which asks whether there exists a simple path between the source and the target vertex matching the given regular expression, and the other is the enumeration problem which aims to find all the matched simple paths. As an important computing component of graph databases, RSPQs are supported in many graph database query languages such as PGQL and openCypher. However, answering RSPQs is known to be NP-hard, making it challenging to design scalable solutions to support a wide range of expressions. In this paper, we first introduce the class of transitive restricted expression, which covers more than 99\% of real-world queries. Then, we propose an efficient algorithm framework to support both reachability and enumeration problems under transitive restricted expression constraints. To boost the performance, we develop novel techniques for reachability detection, the search of candidate vertices, and the reduction of redundant path computation. Extensive experiments demonstrate that our exact method can achieve comparable efficiency to the state-of-the-art approximate approach, and outperforms the state-of-the-art exact methods by up to 2 orders of magnitude.
+Temporal cycles are fundamental patterns in graphs with wide applications in finance, security, and neuroscience. We address the Simple Temporal Cycle Enumeration (STCE) problem: enumerating all simple cycles with strictly increasing timestamps within a time window. Existing methods, such as {\scent}, suffer from redundant checks and expensive preprocessing, making them impractical for large or evolving graphs. We propose a novel edge-centric framework that treats temporal edges as the primary exploration units. By computing edge offsets in linear time, our method depends on a constraint-based DFS that avoids unnecessary traversal and achieves polynomial delay, eliminating both time-order verification and source detection preprocessing. To support dynamic scenarios, we introduce an efficient update algorithm that incrementally explores only the affected paths via a DFS with breakpoint handling. Experiments on 16 real-world datasets show that our approach outperforms the state-of-the-art method by up to two orders of magnitude and handles updates within 1ms.
 
 ## Data Source:
 
-Wikidata (WD) is available here: http://compact-leapfrog.tk/files/wikidata-enumerated.dat.gz
+FR, MS, and TR are from: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/V6AJRV
 
-Youtube (YT) is available here: [Social Computing Data Repository at ASU - YouTube Dataset (syr.edu)](http://datasets.syr.edu/datasets/YouTube.html)
+NL is from: http://konect.cc/networks/link-dynamic-nlwiki/
 
-StackOverflow is availabel here: [SNAP: Network datasets: Stack Overflow temporal network (stanford.edu)](https://snap.stanford.edu/data/sx-stackoverflow.html)
+AM is from: https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml?select=HI-Large_Trans.csv
 
-StringsFC is available here: [Downloads - STRING functional protein association networks (string-db.org)](https://cn.string-db.org/cgi/download?sessionId=bWejWJrlm8uz&species_text=felis+catus)
+Other data are from: https://snap.stanford.edu/data/
 
-StringsHS is available here: [Downloads - STRING functional protein association networks (string-db.org)](https://cn.string-db.org/cgi/download?sessionId=bWejWJrlm8uz&species_text=homo+sapiens)
+The graph files need to follow this rule:
 
-NotreDame is available here: [SNAP: Network datasets: Notre Dame web graph (stanford.edu)](https://snap.stanford.edu/data/web-NotreDame.html)
+1. The EdgeNum lines' format: <sourceID, targetID, Timestamp>
+2. Vertex ID is [1, N]
+3. The edges are ordered by their timestamps 
 
-Stanford is available here: [SNAP: Network datasets: Stanford web graph](https://snap.stanford.edu/data/web-Stanford.html)
-
-Google is available here: [SNAP: Network datasets: Google web graph (stanford.edu)](https://snap.stanford.edu/data/web-Google.html)
-
-Friendster is available here: [SNAP: Network datasets: Friendster social network (stanford.edu)](https://snap.stanford.edu/data/com-Friendster.html)
-
-Rec-dating is available here: [dating | Recommendation Networks | Network Data Repository (networkrepository.com)](https://networkrepository.com/rec-dating.php)
-
-Zhishihudong is available here: [zhishi-hudong-relatedpages | Miscellaneous Networks | Network Data Repository (networkrepository.com)](https://networkrepository.com/zhishi-hudong-relatedpages.php)
-
-The graph file need to follow this rule:
-
-1. The first line is two integers: <nodeNum, labelNum>
-2. The next EdgeNum lines' format: <sourceID, targetID, labelID>
-3. Vertex ID is [1, N]
-4. Label ID is [0, labelNum)
-
-Some example graphs (such as Advogato) are in the "Datasets" folder. 
+We give two data examples CO (CollegeMsg) and SM (SMS) here.
 
 ## Code:
 
-use the command “ulimit -s 102400” to increase the space of the stack.
+Use the command “ulimit -s 102400” to increase the space of the stack.
 
-### Reachability Query:
-
-Our methods are shown in the Reachability Query. 
-
-ARRIVAL and BBFS can be found at https://github.com/idea-iitd/ARRIVAL.
-
-### Enumeration Query:
-
-All the codes are shown in Enumeration Query.
+The codes are in the Folder Code.
 
 ### Run our data:
 
-To compile: g++ -std=c++11 -O3 {name}.cpp
+#### To compile: 
 
-To run: ./a.out {path/to/dataset/edges.txt} {path/to/dataset/query.txt} {path/to/dataset/result.txt} {path/to/dataset/memory.txt}
+cd build
 
-You can change the main function to adjust to different input and output. You can use different code to answer different type of regular path queries (e.g., RTRE_Q14 for Query type 1 and type 4. We omit ETRE_Q5 since it is same as Baseline). We also show an example of our query file in folder "Example". 
+make
 
-The dataset folder should contain:
+#### To run: 
 
-Edge file (edges.txt) (each line of the form u v l, where there is an edge from u to v with a label l)
+./DynamicCycle -i {Graph_file_path} -n {vertices number} -m {edge number} -t {time type} -w {time window} -a {algorithm type} -e {result_file_path}
 
-Query file (the source vertex, the target vertex, the regular expression)
+#### Algorithm Type :
 
-Result file (record the final result, such as reachability information and enumeration results).
+1: F-DFS 2: B-DFS 3: IB-DFS 4: B-DFS for dynamic search
 
-Memory file (record the memory requirment)
+#### Time Type:
 
+0: hours; 1: minutes; 2: seconds
+
+### The Baseline Solution and 2SCENT code:
+
+https://github.com/rohit13k/CycleDetection
